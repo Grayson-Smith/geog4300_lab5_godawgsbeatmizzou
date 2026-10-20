@@ -1,89 +1,46 @@
+Data prep for Lab 5
+
 library(tidyverse)
-library(tidycensus)
 
-#Election data from https://github.com/tonmcg/US_County_Level_Election_Results_08-16
-election_data<-read_csv("https://raw.githubusercontent.com/tonmcg/US_County_Level_Election_Results_08-16/master/US_County_Level_Presidential_Results_08-16.csv") %>%
-  pivot_longer(total_2008:oth_2016,names_to="var",values_to="count") %>%
-  separate(var,into=c("vote","year"),sep="_") %>%
-  pivot_wider(names_from=vote,values_from=count)
+vdem<-read_csv("setup/V-Dem-CY-Core-v16/V-Dem-CY-Core-v16.csv")
+glimpse(vdem)
 
-#Census regions
-regions<-read_csv("setup/Counties_State_Regions_XY.csv") %>%
-  mutate(fips_code=substr(CTY_TXT,2,6))
+vdem_sel<-vdem %>%
+  select(country_name:year,v2x_polyarchy) %>%
+  filter(year %in% c(2000,2020))
+table(vdem_sel$year)
 
-#Census data
-# vars<-load_variables(year=2010,dataset="acs5",cache=TRUE)
-# var_tables<-vars %>%
-#   filter(substr(name,1,6) %in% c("B01001","B03002","B24041","B19013","B15003","B16010"))
-# write_csv(var_tables,"setup/census_vars.csv")
-vars_sel<-read_csv("setup/census_vars.csv")
 
-data2008<-get_acs(geography="county",variables=vars_sel[vars_sel$y2008==1,]$name,year=2010) %>%
-  mutate(year=2008)
-data2012<-get_acs(geography="county",variables=vars_sel[vars_sel$y2012==1,]$name,year=2014)%>%
-  mutate(year=2012)
-data2016<-get_acs(geography="county",variables=vars_sel[vars_sel$y2012==1,]$name,year=2018)%>%
-  mutate(year=2016)
+oecd<-read_csv("setup/OECD.ECO.MAD,DSD_EPS@DF_EPS,1.0,filtered,2026-10-20 19-50-56.csv")
+glimpse(oecd)
 
-var_order<-unique(vars_sel$varname)
+oecd_sel<-oecd %>%
+  filter(TIME_PERIOD %in% c(2000,2020)) %>%
+  select(REF_AREA,`Reference area`,TIME_PERIOD,OBS_VALUE) %>%
+  rename(country_text_id=REF_AREA,
+         country_name=`Reference area`,
+         year=TIME_PERIOD,
+         oecd_climpol_stringent=OBS_VALUE) 
 
-data_all <-bind_rows(data2008,data2012,data2016) %>%
-  left_join(vars_sel %>% rename(variable=name)) %>%
-  select(GEOID,year,varname,estimate) %>%
-  pivot_wider(names_from=varname,values_from=estimate,values_fill=0) 
-names(data_all)
+wdi<-read_csv("setup/P_Data_Extract_From_World_Development_Indicators/cb7473fa-ad6d-4c66-9e37-4d506052d954_Data.csv")
+glimpse(wdi)
 
-data_all$ed_lesshs <- rowSums(data_all[,c(9,28:41)], na.rm = TRUE)
-data_all$ed_hsdiploma<-rowSums(data_all[,c(42,10)], na.rm = TRUE)
-data_all$ed_lessba<-rowSums(data_all[,c(11,43,44)], na.rm = TRUE)
-data_all$ed_graddeg<-rowSums(data_all[,c(45:46,13)], na.rm = TRUE)
+wdi_sel<-wdi %>%
+  pivot_longer(c(`2000 [YR2000]`,`2020 [YR2020]`),names_to="year",values_to="measure") %>%
+  mutate(year=as.numeric(substr(year,1,4))) %>%
+  mutate(wdi_var=case_when(str_detect(`Series Name`,"Carbon")~"co2_emissions",
+                           str_detect(`Series Name`,"GDP")~"gdp",
+                           str_detect(`Series Name`,"Population")~"tot_population")) %>%
+  select(`Country Name`,`Country Code`,year,wdi_var,measure) %>%
+  rename(country_name=`Country Name`,
+         country_text_id=`Country Code`) %>%
+  group_by(country_name,country_text_id,year,wdi_var) %>%
+  filter(measure!="..") %>%
+  summarise(measure=as.numeric(first(measure))) %>%
+  pivot_wider(names_from=wdi_var,values_from=measure)
 
-data_all1<-data_all %>%
-  select(GEOID,year,all_of(var_order),ed_lesshs,ed_hsdiploma,ed_lessba,ed_ba,ed_graddeg,medinc) %>%
-  select(GEOID:indpop_pubadm,ed_totpop,ed_lesshs,ed_hsdiploma,ed_lessba,ed_ba,ed_graddeg,medinc)
-
-#Combine data
-combined<-election_data %>%
-  left_join(regions) %>%
-  left_join(data_all1 %>% 
-              rename(fips_code=GEOID) %>% 
-              mutate(year=as.character(year))) %>%
-  select(fips_code,CTY_TXT,county,State,Region,Division,year,total:oth,totpop:medinc) %>%
-  rename(region=Region,
-         state=State,
-         division=Division) %>%
-  rename(gisjn_cty=CTY_TXT)
-
-combined[is.na(combined)]<-0
-combined$totpop_ind<-rowSums(combined[18:29],na.rm=TRUE)
-
-#write_csv(combined,"data/elections0816_demog.csv",na = "0")
-combined<-combined %>%
-  mutate(dem_pct=dem/total*100,
-         gop_pct=gop/total*100,
-         oth_pct=oth/total*100,
-         wht_pop_pct=wht_pop/totpop*100,
-         afam_pop_pct=afam_pop/totpop*100,
-         asn_pop_pct=asn_pop/totpop*100,
-         hisp_pop_pct=hisp_pop/totpop*100,
-         other_pop_pct=100-(wht_pop_pct+afam_pop_pct+asn_pop_pct+hisp_pop_pct),
-         indpop_ag_pct=indpop_ag/totpop_ind*100,
-         indpop_const_pct=indpop_const/totpop_ind*100,
-         indpop_manuf_pct=indpop_manuf/totpop_ind*100,
-         indpop_trade_pct=indpop_trade/totpop_ind*100,
-         indpop_retail_pct=indpop_retail/totpop_ind*100,
-         indpop_transport_pct=indpop_transport/totpop_ind*100,
-         indpop_info_pct=indpop_info/totpop_ind*100,
-         indpop_prof_pct=indpop_prof/totpop_ind*100,
-         indpop_ed_pct=indpop_ed/totpop_ind*100,
-         indpop_arts_pct=indpop_arts/totpop_ind*100,
-         indpop_serv_pct=indpop_serv/totpop_ind*100,
-         indpop_pubadm_pct=indpop_pubadm/totpop_ind*100,
-         ed_lesshs_pct=ed_lesshs/ed_totpop*100,
-         ed_hsdiploma_pct=ed_hsdiploma/ed_totpop*100,
-         ed_lessba_pct=ed_lessba/ed_totpop*100,
-         ed_ba_pct=ed_ba/ed_totpop*100,
-         ed_graddeg_pct=ed_graddeg/ed_totpop*100) %>%
-  filter(totpop>0 & dem_pct<100 & gop_pct<100)
-
-write_csv(combined,"data/elections0816_demog_pct.csv")
+all_vars<-oecd_sel %>%
+  inner_join(wdi_sel) %>%
+  inner_join(vdem_sel) %>%
+  select(-country_id)
+glimpse(all_vars)
