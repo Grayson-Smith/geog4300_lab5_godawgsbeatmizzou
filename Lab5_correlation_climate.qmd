@@ -167,7 +167,11 @@ Correlation coefficients measure the direction and strength of relationships bet
 **Task 3** _Select just the four variables of interest and create a correlation matrix using the appropriate measure of correlation. Print this table once you've created it._
 
 ```{r Task3}
-
+cor.test(
+  ,
+  pollen_filter$Abies,
+  method = "spearman"
+)
 ```
 
 **Task 4** _Create a correlation plot from this matrix using `corrplot` and the parameters of your choosing_
