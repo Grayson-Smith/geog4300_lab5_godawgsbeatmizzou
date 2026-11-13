@@ -170,19 +170,22 @@ Correlation coefficients measure the direction and strength of relationships bet
 data_2020_filtered <- data_2020 %>%
   select(co2_per_capita, gdp_per_capita, oecd_climpol_stringent, v2x_polyarchy)
 
-filter_cor <- cor(data_2020_filtered,
+filter_cor_2020 <- cor(data_2020_filtered,
                 use="pairwise.complete.obs",
                 method="spearman")
 
 #Used Spearman because none of the data appears all that parametric
 
-filter_cor
+filter_cor_2020
 ```
 
 **Task 4** _Create a correlation plot from this matrix using `corrplot` and the parameters of your choosing_
 
 ```{r Task4}
-corrplot(filter_cor)
+corrplot(filter_cor_2020) #Basic corrplot
+
+corrplot(filter_cor_2020,order="AOE",method="square",
+         type="lower",diag=FALSE)
 ```
 
 **Task 5** Based on your correlation matrix and correlation plot, is climate-policy stringency associated with electoral democracy, GDP per capita, or CO₂ emissions per capita? Describe the direction and strength of each relationship. Do the results support your expectations?
@@ -199,7 +202,15 @@ data_2000 <- all_vars %>%
 **Task 6** _Create a new correlation matrix for 2000 and print it, just as you did for the 2020 data. Then print both matrices so they can be compared side-by-side._
 
 ```{r Task6}
+data_2000_filtered <- data_2000 %>%
+  select(co2_per_capita, gdp_per_capita, oecd_climpol_stringent, v2x_polyarchy)
 
+filter_cor_2000 <- cor(data_2000_filtered,
+                use="pairwise.complete.obs",
+                method="spearman")
+
+filter_cor_2020
+filter_cor_2000
 ```
 
 **Task 7** How did the correlation between climate-policy stringency and electoral democracy change between 2000 and 2020? What about the relationship between policy stringency and CO₂ emissions per capita?
