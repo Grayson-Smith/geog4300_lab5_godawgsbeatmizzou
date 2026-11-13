@@ -10,7 +10,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-*Name: Grayson Smith*
+**Name: Grayson Smith**
 
 ## Introduction
 
@@ -158,7 +158,7 @@ data_2020 %>%
 
 **Task 2** _Which variables appear most skewed? Pick one of these and identify some of the countries that are outliers for this variable._
 
-{Your response goes here.}
+To me, it appears that the most truly skewed variable is the Polyarchy electoral democracy index. The other variables are certainly non-parametric as well (and the climate stringency variable looks almost bi-modal); however, this democracy variable appeared the most truly skewed to me. For this variable, the outliers include nations like India, Hungary, and Indonesia that have lower democracy scores that the majority of the countries presented here. These less democratic countries thus give the dataset a long left skew, as the majority of the other countries contained in this data are centered somewhere around 0.85 in terms of democratic rating.  
 
 ## 3. Calculate correlations for 2020
 
