@@ -174,9 +174,14 @@ filter_cor_2020 <- cor(data_2020_filtered,
                 use="pairwise.complete.obs",
                 method="spearman")
 
+filter_cor_2020_pearson <- cor(data_2020_filtered,
+                               use = "pairwise.complete.obs",
+                               method = "pearson") #Included this for completion -- it still appears (to me) that the data is not paramateric enough to use Pearson
+
 #Used Spearman because none of the data appears all that parametric
 
 filter_cor_2020
+filter_cor_2020_pearson #The difference between tehse two is not all that small, but it appears that many of the same relationships can be deduced. 
 ```
 
 **Task 4** _Create a correlation plot from this matrix using `corrplot` and the parameters of your choosing_
@@ -192,7 +197,9 @@ corrplot(filter_cor_2020,order="AOE",method="square",
 
 In terms of the relationship between climate-policy stringency and electoral democracy, the corrlation (r = 0.499) appears to be positive and of moderate magnitude In terms of the relationship between policy stringency and GDP per capita, the correlation (r = 0.575) also appears to be positive and of moderate magnitude. In terms of the relationship between policy stringency and CO2 emissions per capita, it appears this correlation (r = 0.197) is positive, but of low magnitude. 
 
-Concerning each of these results, 
+Concerning each of these results, I do not find any of them particularly surprising. The relationship between policy stringency and democracy index being only moderately and positively correlated is not entirely surprising, as many of the more democratic countries are those that are more developed and thus have more emissions from an advanced society.  In terms of the relationship between policy stringency and GDP per capita, this is also not entirely surprising, as (to the best of my knowledge), climate policies are more prevelant in "developed" and "wealthier" countries than in other countries that might have a lower GDP per capita. In terms of the relationship between policy and CO2, I am not entirely surprised to see this relationship either (although it certainly is not promising). I did not originally interpret this correctly, but our in-class discussion noting that climate policies are more likely in "advanced" societies that would have been producing a lot of CO2 to start with, meaning they are likely to keep producing a lot of CO2 for some time until the policy levers can start working. 
+
+NOTE: I had originally did very poorly on my interpretations here, so I have low confidence in my responses. I certainly need more practice. 
 
 ## 4. Compare correlations between 2000 and 2020
 
@@ -284,8 +291,8 @@ countries<-ne_download(type="admin_0_countries")
 
 **Disclosure of assistance:** Besides class materials, what other sources of assistance did you use while completing this lab? These can include input from classmates, relevant material identified through web searches (e.g., Stack Overflow), or assistance from ChatGPT or other AI tools. How did these sources support your own learning in completing this lab?
 
-{Response here.}
+I utilized discussions with Dr. Shannon, and also a quick check with Gemini as to why my correlation plot was not working (which was because I was trying to use cor.test, instead of the correct cor()). 
 
 **Lab reflection:** How do you feel about the work you did on this lab? Was it easy, moderate, or hard? What are the biggest things you learned by completing it?
 
-{Your response here}
+I learned more about how to actually code the correlation processes used above -- which I certainly needed more practice on doing beyond just class. I also learned more about interpretation, which I still need more practice with. 
