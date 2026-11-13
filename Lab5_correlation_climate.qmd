@@ -167,17 +167,22 @@ Correlation coefficients measure the direction and strength of relationships bet
 **Task 3** _Select just the four variables of interest and create a correlation matrix using the appropriate measure of correlation. Print this table once you've created it._
 
 ```{r Task3}
-cor.test(
-  ,
-  pollen_filter$Abies,
-  method = "spearman"
-)
+data_2020_filtered <- data_2020 %>%
+  select(co2_per_capita, gdp_per_capita, oecd_climpol_stringent, v2x_polyarchy)
+
+filter_cor <- cor(data_2020_filtered,
+                use="pairwise.complete.obs",
+                method="spearman")
+
+#Used Spearman because none of the data appears all that parametric
+
+filter_cor
 ```
 
 **Task 4** _Create a correlation plot from this matrix using `corrplot` and the parameters of your choosing_
 
 ```{r Task4}
-
+corrplot(filter_cor)
 ```
 
 **Task 5** Based on your correlation matrix and correlation plot, is climate-policy stringency associated with electoral democracy, GDP per capita, or CO₂ emissions per capita? Describe the direction and strength of each relationship. Do the results support your expectations?
