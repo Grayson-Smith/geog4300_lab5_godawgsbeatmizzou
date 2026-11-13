@@ -190,6 +190,10 @@ corrplot(filter_cor_2020,order="AOE",method="square",
 
 **Task 5** Based on your correlation matrix and correlation plot, is climate-policy stringency associated with electoral democracy, GDP per capita, or CO₂ emissions per capita? Describe the direction and strength of each relationship. Do the results support your expectations?
 
+In terms of the relationship between climate-policy stringency and electoral democracy, the corrlation (r = 0.499) appears to be positive and of moderate magnitude In terms of the relationship between policy stringency and GDP per capita, the correlation (r = 0.575) also appears to be positive and of moderate magnitude. In terms of the relationship between policy stringency and CO2 emissions per capita, it appears this correlation (r = 0.197) is positive, but of low magnitude. 
+
+Concerning each of these results, 
+
 ## 4. Compare correlations between 2000 and 2020
 
 Next, examine whether relationships between climate policy and national characteristics differ across the two years. First, we can create a new dataset for the observations in 2000.
