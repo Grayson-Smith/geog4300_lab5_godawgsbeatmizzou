@@ -10,6 +10,8 @@ editor_options:
   chunk_output_type: console
 ---
 
+*Name: Grayson Smith*
+
 ## Introduction
 
 How are national climate policies related to countries' political institutions, economic development, and carbon emissions? Do these relationships look different in 2000 and 2020?
@@ -59,7 +61,7 @@ We will also calculate GDP per capita and CO₂ emissions per capita.
 all_vars <- all_vars %>%
   mutate(
     gdp_per_capita = gdp / tot_population,
-    co2_per_capita = co2_emissions * 1e6 / tot_population 
+    co2_per_capita = co2_emissions * 1e6 / tot_population
   )
 ```
 
@@ -79,7 +81,7 @@ all_vars %>%
 
 **Task 1** _Why might GDP per capita and CO₂ emissions per capita be more useful than total GDP and total emissions when comparing countries?_
 
-{Your response here.}
+N/A
 
 ## 2. Explore the distributions of the variables
 
