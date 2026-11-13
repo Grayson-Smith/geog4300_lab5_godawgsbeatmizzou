@@ -59,7 +59,7 @@ We will also calculate GDP per capita and CO₂ emissions per capita.
 all_vars <- all_vars %>%
   mutate(
     gdp_per_capita = gdp / tot_population,
-    co2_per_capita = co2_emissions * 1e6 / tot_population
+    co2_per_capita = co2_emissions * 1e6 / tot_population 
   )
 ```
 
